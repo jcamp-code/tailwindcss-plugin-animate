@@ -8,18 +8,19 @@ export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator
   const PREFIX = options.prefix ? options.prefix : 'animate-'
 
   function createAnimateValues() {
-    let utilities = {}
+    let values = {}
     const keys = Object.keys(availableKeyframes)
 
     keys.forEach(el => {
       const animationName = el.replace('@keyframes ', '')
       const className = kebabCase(animationName)
 
-      utilities[className] = className
-      utilities[animationName] = animationName
+      // lets both animate-shakeX and animate-shake-x work
+      values[className] = className
+      values[animationName] = animationName
     })
 
-    return utilities
+    return values
   }
 
   function processValue(value: unknown): string {
