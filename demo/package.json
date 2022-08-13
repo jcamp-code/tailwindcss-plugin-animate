@@ -1,0 +1,25 @@
+{
+  "name": "tw-plugin-demo",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vueuse/core": "^9.1.0",
+    "vue": "^3.2.37"
+  },
+  "devDependencies": {
+    "@jcamp/tailwindcss-plugin-icons": "0.1.0",
+    "@vitejs/plugin-vue": "^3.0.2",
+    "autoprefixer": "^10.4.8",
+    "postcss": "^8.4.16",
+    "tailwindcss": "^3.1.8",
+    "typescript": "^4.6.4",
+    "vite": "^3.0.6",
+    "vue-tsc": "^0.39.5"
+  }
+}
