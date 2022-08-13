@@ -2,134 +2,14 @@ import plugin = require('tailwindcss/plugin')
 import { camelCase, kebabCase } from 'lodash'
 import type { AnimateOptions } from './types'
 import type { PluginCreator } from 'tailwindcss/types/config'
-
-//TO-DO:  Combine these into one; since this is dev-side, no need for tree-shaking
-const keyframes = require('./keyframes/keyframes')
-const keyframesLightSpeed = require('./keyframes/lightspeed')
-const keyframesFlip = require('./keyframes/flip')
-const keyframesRotateIn = require('./keyframes/rotateIn')
-const keyframesRotateOut = require('./keyframes/rotateOut')
-const keyframesRoll = require('./keyframes/roll')
-const keyframesZoomIn = require('./keyframes/zoomIn')
-const keyframesZoomOut = require('./keyframes/zoomOut')
-const keyframesBounceIn = require('./keyframes/bounceIn')
-const keyframesBounceOut = require('./keyframes/bounceOut')
-const keyframesSlideIn = require('./keyframes/slideIn')
-const keyframesSlideOut = require('./keyframes/slideOut')
-const keyframesFadeIn = require('./keyframes/fadeIn')
-const keyframesFadeOut = require('./keyframes/fadeOut')
-const keyframesBackIn = require('./keyframes/backIn')
-const keyframesBackOut = require('./keyframes/backOut')
-
-const PREFIX = 'animate-'
-
-function filterDefault(values) {
-  return Object.fromEntries(Object.entries(values).filter(([key]) => key !== 'DEFAULT'))
-}
+import { availableKeyframes } from './keyframes'
 
 export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator {
-  const fallbackKeyframes = {
-    '@keyframes bounce': keyframes.keyframeBounce,
-    '@keyframes flash': keyframes.keyframeFlash,
-    '@keyframes pulse': keyframes.keyframePulse,
-    '@keyframes rubberBand': keyframes.keyframeRubberBand,
-    '@keyframes shakeX': keyframes.keyframeShakeX,
-    '@keyframes shakeY': keyframes.keyframeShakeY,
-    '@keyframes headShake': keyframes.keyframeHeadShake,
-    '@keyframes swing': keyframes.keyframeSwing,
-    '@keyframes tada': keyframes.keyframeTada,
-    '@keyframes wobble': keyframes.keyframeWobble,
-    '@keyframes jello': keyframes.keyframeJello,
-    '@keyframes heartBeat': keyframes.keyframeHeartBeat,
-    '@keyframes hinge': keyframes.keyframeHinge,
-    '@keyframes jackInTheBox': keyframes.keyframeJackInTheBox,
-    '@keyframes lightSpeedInLeft': keyframesLightSpeed.keyframeLightSpeedInLeft,
-    '@keyframes lightSpeedInRight': keyframesLightSpeed.keyframeLightSpeedInRight,
-    '@keyframes lightSpeedOutLeft': keyframesLightSpeed.keyframeLightSpeedOutLeft,
-    '@keyframes lightSpeedOutRight': keyframesLightSpeed.keyframeLightSpeedOutRight,
-    '@keyframes flip': keyframesFlip.keyframeFlip,
-    '@keyframes flipInX': keyframesFlip.keyframeFlipInX,
-    '@keyframes flipInY': keyframesFlip.keyframeFlipInY,
-    '@keyframes flipOutX': keyframesFlip.keyframeFlipOutX,
-    '@keyframes flipOutY': keyframesFlip.keyframeFlipOutY,
-    '@keyframes rotateIn': keyframesRotateIn.keyframeRotateIn,
-    '@keyframes rotateInDownLeft': keyframesRotateIn.keyframeRotateInDownLeft,
-    '@keyframes rotateInDownRight': keyframesRotateIn.keyframeRotateInDownRight,
-    '@keyframes rotateInUpLeft': keyframesRotateIn.keyframeRotateInUpLeft,
-    '@keyframes rotateInUpRight': keyframesRotateIn.keyframeRotateInUpRight,
-    '@keyframes rotateOut': keyframesRotateOut.keyframeRotateOut,
-    '@keyframes rotateOutDownLeft': keyframesRotateOut.keyframeRotateOutDownLeft,
-    '@keyframes rotateOutDownRight': keyframesRotateOut.keyframeRotateOutDownRight,
-    '@keyframes rotateOutUpLeft': keyframesRotateOut.keyframeRotateOutUpLeft,
-    '@keyframes rotateOutUpRight': keyframesRotateOut.keyframeRotateOutUpRight,
-    '@keyframes rollIn': keyframesRoll.keyframeRollIn,
-    '@keyframes rollOut': keyframesRoll.keyframeRollOut,
-    '@keyframes zoomIn': keyframesZoomIn.keyframeZoomIn,
-    '@keyframes zoomInDown': keyframesZoomIn.keyframeZoomInDown,
-    '@keyframes zoomInLeft': keyframesZoomIn.keyframeZoomInLeft,
-    '@keyframes zoomInRight': keyframesZoomIn.keyframeZoomInRight,
-    '@keyframes zoomInUp': keyframesZoomIn.keyframeZoomInUp,
-    '@keyframes bounceIn': keyframesBounceIn.keyframeBounceIn,
-    '@keyframes bounceInDown': keyframesBounceIn.keyframeBounceInDown,
-    '@keyframes bounceInLeft': keyframesBounceIn.keyframeBounceInLeft,
-    '@keyframes bounceInRight': keyframesBounceIn.keyframeBounceInRight,
-    '@keyframes bounceInUp': keyframesBounceIn.keyframeBounceInUp,
-    '@keyframes bounceOut': keyframesBounceOut.keyframeBounceOut,
-    '@keyframes bounceOutDown': keyframesBounceOut.keyframeBounceOutDown,
-    '@keyframes bounceOutLeft': keyframesBounceOut.keyframeBounceOutLeft,
-    '@keyframes bounceOutRight': keyframesBounceOut.keyframeBounceOutRight,
-    '@keyframes bounceOutUp': keyframesBounceOut.keyframeBounceOutUp,
-    '@keyframes zoomOut': keyframesZoomOut.keyframeZoomOut,
-    '@keyframes zoomOutDown': keyframesZoomOut.keyframeZoomOutDown,
-    '@keyframes zoomOutLeft': keyframesZoomOut.keyframeZoomOutLeft,
-    '@keyframes zoomOutRight': keyframesZoomOut.keyframeZoomOutRight,
-    '@keyframes zoomOutUp': keyframesZoomOut.keyframeZoomOutUp,
-    '@keyframes slideInDown': keyframesSlideIn.keyframeSlideInDown,
-    '@keyframes slideInLeft': keyframesSlideIn.keyframeSlideInLeft,
-    '@keyframes slideInRight': keyframesSlideIn.keyframeSlideInRight,
-    '@keyframes slideInUp': keyframesSlideIn.keyframeSlideInUp,
-    '@keyframes slideOutDown': keyframesSlideOut.keyframeSlideOutDown,
-    '@keyframes slideOutLeft': keyframesSlideOut.keyframeSlideOutLeft,
-    '@keyframes slideOutRight': keyframesSlideOut.keyframeSlideOutRight,
-    '@keyframes slideOutUp': keyframesSlideOut.keyframeSlideOutUp,
-    '@keyframes fadeIn': keyframesFadeIn.keyframeFadeIn,
-    '@keyframes fadeInDown': keyframesFadeIn.keyframeFadeInDown,
-    '@keyframes fadeInDownBig': keyframesFadeIn.keyframeFadeInDownBig,
-    '@keyframes fadeInLeft': keyframesFadeIn.keyframeFadeInLeft,
-    '@keyframes fadeInLeftBig': keyframesFadeIn.keyframeFadeInLeftBig,
-    '@keyframes fadeInRight': keyframesFadeIn.keyframeFadeInRight,
-    '@keyframes fadeInRightBig': keyframesFadeIn.keyframeFadeInRightBig,
-    '@keyframes fadeInTopLeft': keyframesFadeIn.keyframeFadeInTopLeft,
-    '@keyframes fadeInTopRight': keyframesFadeIn.keyframeFadeInTopRight,
-    '@keyframes fadeInBottomLeft': keyframesFadeIn.keyframeFadeInBottomLeft,
-    '@keyframes fadeInBottomRight': keyframesFadeIn.keyframeFadeInBottomRight,
-    '@keyframes fadeInUp': keyframesFadeIn.keyframeFadeInUp,
-    '@keyframes fadeInUpBig': keyframesFadeIn.keyframeFadeInUpBig,
-    '@keyframes fadeOut': keyframesFadeOut.keyframeFadeOut,
-    '@keyframes fadeOutDown': keyframesFadeOut.keyframeFadeOutDown,
-    '@keyframes fadeOutDownBig': keyframesFadeOut.keyframeFadeOutDownBig,
-    '@keyframes fadeOutLeft': keyframesFadeOut.keyframeFadeOutLeft,
-    '@keyframes fadeOutLeftBig': keyframesFadeOut.keyframeFadeOutLeftBig,
-    '@keyframes fadeOutRight': keyframesFadeOut.keyframeFadeOutRight,
-    '@keyframes fadeOutRightBig': keyframesFadeOut.keyframeFadeOutRightBig,
-    '@keyframes fadeOutUp': keyframesFadeOut.keyframeFadeOutUp,
-    '@keyframes fadeOutUpBig': keyframesFadeOut.keyframeFadeOutUpBig,
-    '@keyframes fadeOutTopLeft': keyframesFadeOut.keyframeFadeOutTopLeft,
-    '@keyframes fadeOutTopRight': keyframesFadeOut.keyframeFadeOutTopRight,
-    '@keyframes fadeOutBottomLeft': keyframesFadeOut.keyframeFadeOutBottomLeft,
-    '@keyframes fadeOutBottomRight': keyframesFadeOut.keyframeFadeOutBottomRight,
-    '@keyframes backInDown': keyframesBackIn.keyframeBackInDown,
-    '@keyframes backInUp': keyframesBackIn.keyframeBackInUp,
-    '@keyframes backInLeft': keyframesBackIn.keyframeBackInLeft,
-    '@keyframes backInRight': keyframesBackIn.keyframeBackInRight,
-    '@keyframes backOutDown': keyframesBackOut.keyframeBackOutDown,
-    '@keyframes backOutUp': keyframesBackOut.keyframeBackOutUp,
-    '@keyframes backOutLeft': keyframesBackOut.keyframeBackOutLeft,
-    '@keyframes backOutRight': keyframesBackOut.keyframeBackOutRight,
-  }
+  const PREFIX = options.prefix ? options.prefix : 'animate-'
+
   function createAnimateValues() {
     let utilities = {}
-    const keys = Object.keys(fallbackKeyframes)
+    const keys = Object.keys(availableKeyframes)
 
     keys.forEach(el => {
       const animationName = el.replace('@keyframes ', '')
@@ -196,16 +76,16 @@ export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator
     },
   }
 
-  return function ({ addBase, addUtilities, matchUtilities, theme: _theme }) {
+  return function ({ addUtilities, matchUtilities, theme }) {
     let animatedSpeed = options.animatedSpeed
       ? options.animatedSpeed
-      : _theme('animationDuration.DEFAULT')
+      : theme('animationDuration.DEFAULT')
 
     if (!animatedSpeed) animatedSpeed = 1000
 
     function processAnimate(value: any) {
       const framesName = `@keyframes ${camelCase(value)}`
-      if (!fallbackKeyframes[framesName]) {
+      if (!availableKeyframes[framesName]) {
         console.warn(`invalid animation name: ${value}; arbitrary values not supported`)
       }
 
@@ -216,12 +96,13 @@ export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator
 
       return [
         { animationName: value, animationDuration: animatedSpeed, ...extras },
-        { [`@keyframes ${value}`]: fallbackKeyframes[framesName] },
+        { [`@keyframes ${value}`]: availableKeyframes[framesName] },
       ]
     }
 
-    function theme(name: string) {
-      return filterDefault(_theme(name))
+    function filterTheme(name: string) {
+      const values = theme(name)
+      return Object.fromEntries(Object.entries(values).filter(([key]) => key !== 'DEFAULT'))
     }
 
     matchUtilities(
@@ -232,17 +113,17 @@ export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator
 
     matchUtilities(
       { [`${PREFIX}duration`]: value => ({ animationDuration: processValue(value) }) },
-      { values: theme('animationDuration') }
+      { values: filterTheme('animationDuration') }
     )
 
     matchUtilities(
       { [`${PREFIX}delay`]: value => ({ animationDelay: processValue(value) }) },
-      { values: theme('animationDelay') }
+      { values: filterTheme('animationDelay') }
     )
 
     matchUtilities(
       { [`${PREFIX}ease`]: value => ({ animationTimingFunction: value as string }) },
-      { values: theme('animationTimingFunction') }
+      { values: filterTheme('animationTimingFunction') }
     )
 
     addUtilities({
@@ -254,22 +135,22 @@ export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator
 
     matchUtilities(
       { [`${PREFIX}fill-mode`]: value => ({ animationFillMode: value as string }) },
-      { values: theme('animationFillMode') }
+      { values: filterTheme('animationFillMode') }
     )
 
     matchUtilities(
       { [`${PREFIX}direction`]: value => ({ animationDirection: value as string }) },
-      { values: theme('animationDirection') }
+      { values: filterTheme('animationDirection') }
     )
 
     matchUtilities(
       { [`${PREFIX}repeat`]: value => ({ animationIterationCount: value as string }) },
-      { values: theme('animationRepeat') }
+      { values: filterTheme('animationRepeat') }
     )
   }
 }
 
-const pluginIcons = plugin.withOptions<AnimateOptions>(
+const pluginAnimate = plugin.withOptions<AnimateOptions>(
   function (options) {
     return createPluginAnimate(options)
   },
@@ -346,4 +227,4 @@ const pluginIcons = plugin.withOptions<AnimateOptions>(
   }
 )
 
-module.exports = pluginIcons
+module.exports = pluginAnimate

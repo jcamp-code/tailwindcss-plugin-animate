@@ -1,5 +1,12 @@
 export interface AnimateOptions {
   /**
+   * Class prefix for matching animation rules.
+   *
+   * @default `animate-`
+   */
+  prefix?: string
+
+  /**
    * Default animation speed / duration
    *
    * @default 1000

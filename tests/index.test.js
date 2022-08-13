@@ -1,5 +1,5 @@
 const path = require('path')
-const animate = require('../dist/animate.js')
+const animate = require('../dist/index.js')
 const postcss = require('postcss')
 const tailwindcss = require('tailwindcss')
 
@@ -146,6 +146,23 @@ it('includesExtraPropsForHeartBeatWithConfig', () => {
     animation-timing-function: ease-in-out
 }
 @keyframes heart-beat {`
+
+    expect(result.css).toContain(value)
+  })
+})
+
+it('usesPrefixOption', () => {
+  const config = {
+    animate: { prefix: 'an-' },
+    content: [{ raw: String.raw`<div class="an-shakeX"></div>` }],
+  }
+
+  return run(config, '@tailwind utilities').then(result => {
+    const value = String.raw`.an-shakeX {
+    animation-name: shakeX;
+    animation-duration: 1000ms
+}
+@keyframes shakeX {`
 
     expect(result.css).toContain(value)
   })
