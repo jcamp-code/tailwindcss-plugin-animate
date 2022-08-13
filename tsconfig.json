@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "baseUrl": ".",
+    "target": "ESNext",
+    "module": "CommonJS",
+    "strict": true,
+    "jsx": "preserve",
+    "resolveJsonModule": true,
+    "esModuleInterop": false,
+    "lib": ["ESNext", "dom"],
+    "types": ["node"],
+    "incremental": false,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "noUnusedLocals": false,
+    "strictNullChecks": false,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "importHelpers": true,
+    "sourceMap": false,
+    "paths": {
+      "/@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": ["dist", "node_modules"]
+}

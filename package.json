@@ -1,0 +1,53 @@
+{
+  "name": "@jcamp/tailwindcss-plugin-animate",
+  "version": "0.0.0",
+  "description": "An updated animation plugin for Tailwind CSS v3",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsc --watch & cd ./demo && npm run-script dev",
+    "build": "tsc",
+    "release": "np --no-2fa",
+    "test": "tsc && c8 jest"
+  },
+  "license": "MIT",
+  "author": "John Campion (https://github.com/JohnCampionJr/)",
+  "repository": "https://github.com/jcamp-code/tailwindcss-plugin-animate",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist/*"
+  ],
+  "devDependencies": {
+    "@types/lodash": "^4.14.182",
+    "c8": "^7.12.0",
+    "jest": "^28.1.3",
+    "np": "^7.6.2",
+    "postcss": "^8.4.16",
+    "prettier": "^2.7.1",
+    "tailwindcss": "^3.1.0",
+    "typescript": "4.7.4"
+  },
+  "peerDependencies": {
+    "tailwindcss": ">=3.1.0"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest/customMatchers.js"
+    ]
+  },
+  "c8": {
+    "exclude": [
+      "jest/customMatchers.js",
+      "**/*.test.js"
+    ]
+  },
+  "keywords": [
+    "tailwindcss",
+    "animate",
+    "animation"
+  ],
+  "dependencies": {
+    "lodash": "4.17.21"
+  }
+}
