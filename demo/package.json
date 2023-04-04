@@ -1,7 +1,7 @@
 {
   "name": "tw-plugin-demo",
   "private": true,
-  "packageManager": "^pnpm@8.0.0",
+  "packageManager": "^pnpm@8.1.0",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
