@@ -1,4 +1,3 @@
-// From https://github.com/tailwindlabs/tailwindcss-line-clamp/blob/master/jest/customMatchers.js
 const prettier = require('prettier')
 const { diff } = require('jest-diff')
 
@@ -28,7 +27,12 @@ expect.extend({
     const message = pass
       ? () => {
           return (
-            this.utils.matcherHint('toMatchCss', undefined, undefined, options) +
+            this.utils.matcherHint(
+              'toMatchCss',
+              undefined,
+              undefined,
+              options
+            ) +
             '\n\n' +
             `Expected: not ${this.utils.printExpected(format(received))}\n` +
             `Received: ${this.utils.printReceived(format(argument))}`
@@ -43,7 +47,12 @@ expect.extend({
           })
 
           return (
-            this.utils.matcherHint('toMatchCss', undefined, undefined, options) +
+            this.utils.matcherHint(
+              'toMatchCss',
+              undefined,
+              undefined,
+              options
+            ) +
             '\n\n' +
             (diffString && diffString.includes('- Expect')
               ? `Difference:\n\n${diffString}`
@@ -55,33 +64,50 @@ expect.extend({
     return { actual: received, message, pass }
   },
   toIncludeCss(received, argument) {
+    function stripped(str) {
+      return str
+        .replace('/* prettier-ignore */', '')
+        .replace(/\s/g, '')
+        .replace(/;/g, '')
+    }
+
     const options = {
       comment: 'stripped(received).includes(stripped(argument))',
       isNot: this.isNot,
       promise: this.promise,
     }
 
-    const actual = format(received)
-    const expected = format(argument)
-
-    const pass = actual.includes(expected)
+    const pass = stripped(received).includes(stripped(argument))
 
     const message = pass
       ? () => {
           return (
-            this.utils.matcherHint('toIncludeCss', undefined, undefined, options) +
+            this.utils.matcherHint(
+              'toIncludeCss',
+              undefined,
+              undefined,
+              options
+            ) +
             '\n\n' +
             `Expected: not ${this.utils.printExpected(format(received))}\n` +
             `Received: ${this.utils.printReceived(format(argument))}`
           )
         }
       : () => {
+          const actual = format(received)
+          const expected = format(argument)
+
           const diffString = diff(expected, actual, {
             expand: this.expand,
           })
 
           return (
-            this.utils.matcherHint('toIncludeCss', undefined, undefined, options) +
+            this.utils.matcherHint(
+              'toIncludeCss',
+              undefined,
+              undefined,
+              options
+            ) +
             '\n\n' +
             (diffString && diffString.includes('- Expect')
               ? `Difference:\n\n${diffString}`
@@ -97,7 +123,7 @@ expect.extend({
 expect.extend({
   // Compare two CSS strings with all whitespace removed
   // This is probably naive but it's fast and works well enough.
-  toMatchFormattedCss(received, argument) {
+  toMatchFormattedCss(received = '', argument = '') {
     function format(input) {
       return prettier.format(input.replace(/\n/g, ''), {
         parser: 'css',
@@ -118,7 +144,12 @@ expect.extend({
     const message = pass
       ? () => {
           return (
-            this.utils.matcherHint('toMatchCss', undefined, undefined, options) +
+            this.utils.matcherHint(
+              'toMatchCss',
+              undefined,
+              undefined,
+              options
+            ) +
             '\n\n' +
             `Expected: not ${this.utils.printExpected(formattedReceived)}\n` +
             `Received: ${this.utils.printReceived(formattedArgument)}`
@@ -133,7 +164,12 @@ expect.extend({
           })
 
           return (
-            this.utils.matcherHint('toMatchCss', undefined, undefined, options) +
+            this.utils.matcherHint(
+              'toMatchCss',
+              undefined,
+              undefined,
+              options
+            ) +
             '\n\n' +
             (diffString && diffString.includes('- Expect')
               ? `Difference:\n\n${diffString}`

@@ -1,17 +1,17 @@
-import plugin = require('tailwindcss/plugin')
+import plugin from 'tailwindcss/plugin'
 import { camelCase, kebabCase } from 'lodash'
-import type { AnimateOptions } from './types'
 import type { PluginCreator } from 'tailwindcss/types/config'
+import type { AnimateOptions } from './types'
 import { availableKeyframes } from './keyframes'
 
-export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator {
+function createPluginAnimate(options: AnimateOptions = {}): PluginCreator {
   const PREFIX = options.prefix ? options.prefix : 'animate-'
 
   function createAnimateValues() {
-    let values = {}
+    const values = {}
     const keys = Object.keys(availableKeyframes)
 
-    keys.forEach(el => {
+    keys.forEach((el) => {
       const animationName = el.replace('@keyframes ', '')
       const className = kebabCase(animationName)
 
@@ -27,7 +27,7 @@ export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator
     if (isNaN(Number(value))) {
       return value as string
     }
-    return value + 'ms'
+    return `${value}ms`
   }
 
   // set fallback if speed not defined
@@ -35,7 +35,9 @@ export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator
   const hingeSpeed = options.hingeSpeed ? options.hingeSpeed : 2000
   const bounceInSpeed = options.bounceInSpeed ? options.bounceInSpeed : 750
   const bounceOutSpeed = options.bounceOutSpeed ? options.bounceOutSpeed : 750
-  const animationDelaySpeed = options.animationDelaySpeed ? options.animationDelaySpeed : 500
+  const animationDelaySpeed = options.animationDelaySpeed
+    ? options.animationDelaySpeed
+    : 500
 
   const extraProperties = {
     bounce: {
@@ -87,7 +89,9 @@ export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator
     function processAnimate(value: any) {
       const framesName = `@keyframes ${camelCase(value)}`
       if (!availableKeyframes[framesName]) {
-        console.warn(`invalid animation name: ${value}; arbitrary values not supported`)
+        console.warn(
+          `invalid animation name: ${value}; arbitrary values not supported`
+        )
       }
 
       let extras = {}
@@ -103,27 +107,42 @@ export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator
 
     function filterTheme(name: string) {
       const values = theme(name)
-      return Object.fromEntries(Object.entries(values).filter(([key]) => key !== 'DEFAULT'))
+      return Object.fromEntries(
+        // @ts-expect-error values causes a type error
+        Object.entries(values).filter(([key]) => key !== 'DEFAULT')
+      )
     }
 
     matchUtilities(
       // @ts-expect-error typing does not allow for array of results
-      { [`${PREFIX.replace(/-$/, '')}`]: value => processAnimate(value) },
+      { [`${PREFIX.replace(/-$/, '')}`]: (value) => processAnimate(value) },
       { values: createAnimateValues() }
     )
 
     matchUtilities(
-      { [`${PREFIX}duration`]: value => ({ animationDuration: processValue(value) }) },
+      {
+        [`${PREFIX}duration`]: (value) => ({
+          animationDuration: processValue(value),
+        }),
+      },
       { values: filterTheme('animationDuration') }
     )
 
     matchUtilities(
-      { [`${PREFIX}delay`]: value => ({ animationDelay: processValue(value) }) },
+      {
+        [`${PREFIX}delay`]: (value) => ({
+          animationDelay: processValue(value),
+        }),
+      },
       { values: filterTheme('animationDelay') }
     )
 
     matchUtilities(
-      { [`${PREFIX}ease`]: value => ({ animationTimingFunction: value as string }) },
+      {
+        [`${PREFIX}ease`]: (value) => ({
+          animationTimingFunction: value as string,
+        }),
+      },
       { values: filterTheme('animationTimingFunction') }
     )
 
@@ -131,31 +150,45 @@ export function createPluginAnimate(options: AnimateOptions = {}): PluginCreator
       [`.${PREFIX}running`]: { animationPlayState: 'running' },
       [`.${PREFIX}paused`]: { animationPlayState: 'paused' },
       [`.${PREFIX}infinite`]: { animationIterationCount: 'infinite' },
-      [`.${PREFIX}delay`]: { animationDelay: processValue(animationDelaySpeed) },
+      [`.${PREFIX}delay`]: {
+        animationDelay: processValue(animationDelaySpeed),
+      },
     })
 
     matchUtilities(
-      { [`${PREFIX}fill-mode`]: value => ({ animationFillMode: value as string }) },
+      {
+        [`${PREFIX}fill-mode`]: (value) => ({
+          animationFillMode: value as string,
+        }),
+      },
       { values: filterTheme('animationFillMode') }
     )
 
     matchUtilities(
-      { [`${PREFIX}direction`]: value => ({ animationDirection: value as string }) },
+      {
+        [`${PREFIX}direction`]: (value) => ({
+          animationDirection: value as string,
+        }),
+      },
       { values: filterTheme('animationDirection') }
     )
 
     matchUtilities(
-      { [`${PREFIX}repeat`]: value => ({ animationIterationCount: value as string }) },
+      {
+        [`${PREFIX}repeat`]: (value) => ({
+          animationIterationCount: value as string,
+        }),
+      },
       { values: filterTheme('animationRepeat') }
     )
   }
 }
 
-const pluginAnimate = plugin.withOptions<AnimateOptions>(
-  function (options) {
+export default plugin.withOptions<AnimateOptions>(
+  (options) => {
     return createPluginAnimate(options)
   },
-  function (options) {
+  () => {
     return {
       content: {},
       theme: {
@@ -227,5 +260,3 @@ const pluginAnimate = plugin.withOptions<AnimateOptions>(
     } as any
   }
 )
-
-module.exports = pluginAnimate

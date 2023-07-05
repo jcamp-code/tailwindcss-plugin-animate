@@ -38,6 +38,23 @@ module.exports = {
 }
 ```
 
+```ts
+// tailwind.config.ts
+import type { Config } from 'tailwindcss'
+import animate from '@jcamp/tailwindcss-plugin-animate'
+
+export default <Partial<Config>>{
+  theme: {
+    // ...
+  },
+  plugins: [
+    animate({
+      /* options */
+    }),
+  ],
+}
+```
+
 ## Configuration
 
 Refer to the [type definition](https://github.com/jcamp-code/tailwindcss-plugin-animate/blob/main/src/types.ts) for all configurations avaliable.
