@@ -1,6 +1,6 @@
 {
   "name": "@jcamp/tailwindcss-plugin-animate",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "packageManager": "^pnpm@8.1.0",
   "description": "An updated animation plugin for Tailwind CSS v3",
   "author": "John Campion (https://github.com/JohnCampionJr/)",
