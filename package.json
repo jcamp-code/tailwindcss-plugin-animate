@@ -1,6 +1,6 @@
 {
   "name": "@jcamp/tailwindcss-plugin-animate",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "packageManager": "^pnpm@8.1.0",
   "description": "An updated animation plugin for Tailwind CSS v3",
   "author": "John Campion (https://github.com/JohnCampionJr/)",
@@ -34,7 +34,7 @@
     "postinstall": "npx simple-git-hooks",
     "release": "changelogen --release --push",
     "release:major": "changelogen --release --major --push",
-    "publish": "pnpm publish --access public"
+    "pub": "pnpm publish --access public"
   },
   "publishConfig": {
     "access": "public"
