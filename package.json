@@ -31,7 +31,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --check --write .",
-    "postinstall": "npx simple-git-hooks",
+    "prepare": "npx simple-git-hooks",
     "release": "changelogen --release --push",
     "release:major": "changelogen --release --major --push",
     "pub": "pnpm publish --access public"
