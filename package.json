@@ -34,7 +34,7 @@
     "prepare": "npx simple-git-hooks",
     "release": "changelogen --release --push",
     "release:major": "changelogen --release --major --push",
-    "pub": "pnpm publish --access public"
+    "pub": "pnpm build && pnpm postbuild && pnpm publish --access public"
   },
   "publishConfig": {
     "access": "public"
